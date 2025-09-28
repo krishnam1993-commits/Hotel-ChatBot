@@ -62,6 +62,31 @@ hotel_options = {
          "desc": "Sophisticated villas with mountain/snow views; premium service, outdoor pool.",
          "phone": "(970) 477-3700",
          "price": 1799},
+ {"name": "Highline Vail - a DoubleTree by Hilton",
+         "rating": "4.2⭐ (944 reviews)",
+         "desc": "Refined rooms with balcony & mountain views, dining, breakfast option, free shuttle.",
+         "phone": "(970) 476-2739",
+         "price": 662},
+        {"name": "Vail's Mountain Haus",
+         "rating": "4.4⭐ (252 reviews)",
+         "desc": "Polished resort offering free breakfast, Wi-Fi, pool, hot tubs, mountain views.",
+         "phone": "(970) 476-2434",
+         "price": 662},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     ],
     "New York": [
         {"name": "Hotel Mulberry",
