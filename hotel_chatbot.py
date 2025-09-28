@@ -142,33 +142,41 @@ st.title("🏨 Hotel Booking Assistant")
 if st.button("🔄 Restart Chat"):
     reset_chat()
 
-# Step 0: Greet
+
+# -----------------------------
+if "step" not in st.session_state:
+    st.session_state.step = 0  # 0 = not started yet
+
+# -----------------------------
+# Step 0: Start Chat
+# -----------------------------
 if st.session_state.step == 0:
-    st.write("👋 Hello! Welcome to our Hotel Booking Assistant.")
+    st.write("👋 Hi! Welcome to our hotel concierge chatbot.")
     if st.button("Start Chat"):
         st.session_state.step = 1
+        st.experimental_rerun()  # move to Step 1
 
 # Step 1: Ask name
-elif st.session_state.step == 1:
-    st.write("May I know your name?")
-    name = st.text_input("Enter your name", value=st.session_state.name)
+if st.session_state.step == 1:
+    name = st.text_input("Please enter your name:")
     if st.button("Submit Name"):
-        if name.strip():
-            st.session_state.name = name.strip()
+        if name.strip() != "":
+            st.session_state.name = name
             st.session_state.step = 2
+            st.experimental_rerun()
+        else:
+            st.warning("Please enter a valid name.")
 
 # Step 2: Destination
-elif st.session_state.step == 2:
-    st.write(f"Nice to meet you, **{st.session_state.name}**! 🌟 Where would you like to go?")
-    dest = st.radio("Choose your destination:", ["Hawaii (Beach)", "Vail, Colorado (Skiing)", "New York City (Music Concerts)"])
-    if st.button("Confirm Destination"):
-        if "Hawaii" in dest:
-            st.session_state.destination = "Hawaii"
-        elif "Vail" in dest:
-            st.session_state.destination = "Vail"
-        else:
-            st.session_state.destination = "New York"
-        st.session_state.step = 21  # → new step for checkin/checkout
+# Step 2: Ask Location Preference
+# -----------------------------
+if st.session_state.step == 2:
+    location = st.selectbox("Where would you like to go?", 
+                            ["Hawaii (Beach)", "Vail, Colorado (Skiing)", "NYC (Music Concert)"])
+    if st.button("Submit Location"):
+        st.session_state.location = location
+        st.session_state.step = 3
+        st.experimental_rerun()
 
 # Step 21: Checkin & Checkout
 elif st.session_state.step == 21:
@@ -184,12 +192,20 @@ elif st.session_state.step == 21:
             st.error("⚠️ Please select valid check-in and check-out dates.")
 
 # Step 3: Preferences
-elif st.session_state.step == 3:
-    dest = st.session_state.destination
-    st.write(f"Based on your previous stay preferences for **{dest}**, we are considering:")
-    st.info(preferences[dest])
+# Step 3: Show Preference Summary
+# -----------------------------
+if st.session_state.step == 3:
+    st.write(f"Based on your previous preferences, we suggest for {st.session_state.location}:")
+    if "Hawaii" in st.session_state.location:
+        st.write("- Deluxe Room, Balcony with Sea View, No Smoking, Breakfast included, Near the beach")
+    elif "Vail" in st.session_state.location:
+        st.write("- Deluxe Room, Balcony with Snow View, No Smoking, Breakfast included, Near the mountains")
+    elif "NYC" in st.session_state.location:
+        st.write("- Deluxe Room, Balcony with City View, No Smoking, Breakfast included, Near subway")
+
     if st.button("Go for Hotel Options"):
         st.session_state.step = 4
+        st.experimental_rerun()
 
 # Step 4: Hotels
 # Step 4: Hotels
