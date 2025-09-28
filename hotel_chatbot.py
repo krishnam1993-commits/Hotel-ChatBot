@@ -468,14 +468,21 @@ if st.session_state.proceed_personalization:
 # Step 19: In-stay Services Selection
 # -----------------------------
 
-# Initialize flag
+# Initialize session_state variables for services
+if "wake_up_call" not in st.session_state:
+    st.session_state.wake_up_call = False
+if "laundry_request" not in st.session_state:
+    st.session_state.laundry_request = False
+if "cab_request" not in st.session_state:
+    st.session_state.cab_request = False
+if "breakfast_request" not in st.session_state:
+    st.session_state.breakfast_request = False
 if "proceed_services" not in st.session_state:
     st.session_state.proceed_services = False
 
 st.write(f"Hi {st.session_state.name}, we hope you are having a wonderful experience during your stay.")
 st.write("Please select from the options below:")
 
-# Options for guest services
 service_options = [
     "Wake Up Call at 7AM",
     "Laundry",
@@ -489,7 +496,7 @@ selected_services = st.multiselect(
     service_options
 )
 
-# Confirm selections
+# Confirm selections button
 if st.button("Confirm Services"):
     # Save each selection in session_state
     st.session_state.wake_up_call = "Wake Up Call at 7AM" in selected_services
@@ -497,7 +504,7 @@ if st.button("Confirm Services"):
     st.session_state.cab_request = "Call cab" in selected_services
     st.session_state.breakfast_request = "Schedule breakfast in room" in selected_services
 
-    # Show confirmation messages
+    # Show confirmation messages for each selected service
     for service in selected_services:
         st.success(f"Thanks for the confirmation. We will {service} ✅")
 
@@ -557,22 +564,77 @@ if st.session_state.proceed_services:
 
 
 
-# Step 20: Service confirmation
-elif st.session_state.step == 20:
-    st.write(f"Thanks for the confirmation. We will {st.session_state.instay_service}")
-    if st.button("Continue"):
-        st.session_state.step = 21
+# -----------------------------
+# Step 20: Service Confirmation Display
+# -----------------------------
 
-# Step 21: Farewell message and feedback request
-elif st.session_state.step == 21:
-    hotel_name = st.session_state.selected_hotel["name"] if st.session_state.selected_hotel else ""
-    st.write(f"Hi {st.session_state.name}, Thanks for choosing {hotel_name} for your stay. Hope you had a wonderful time staying with us. We would love to your back from you on your experience")
-    if st.button("Provide Feedback / Finish"):
-        st.session_state.step = 22
+# Initialize session_state for step 20
+if "proceed_step20" not in st.session_state:
+    st.session_state.proceed_step20 = False
 
-# Step 22: Loyalty offer message
-elif st.session_state.step == 22:
-    st.write("As you have been an esteemed member of [HotelChainName], we are happy to share 2 night & 3 day weekend space at any of our property at flat 50% discount. You can avail this offer in 365 days from you. Just login to our website with your registered email id to claim the offer.")
-    st.success("Thank you! End of flow.")
-    if st.button("Restart Chat"):
+st.write(f"Hi {st.session_state.name}, thanks for choosing {st.session_state.selected_hotel['name']} for your stay.")
+
+# Display selected services summary
+st.write("Here’s a summary of the services you selected:")
+if st.session_state.wake_up_call:
+    st.write("✅ Wake Up Call at 7AM")
+if st.session_state.laundry_request:
+    st.write("✅ Laundry")
+if st.session_state.cab_request:
+    st.write("✅ Call cab")
+if st.session_state.breakfast_request:
+    st.write("✅ Schedule breakfast in room")
+
+# Proceed button
+if st.button("Proceed Further"):
+    st.session_state.proceed_step20 = True
+
+# Move to Step 21
+if st.session_state.proceed_step20:
+    st.session_state.step = 21
+    st.session_state.proceed_step20 = False  # reset flag
+
+# -----------------------------
+# Step 21: Post-Stay Thank You & Feedback Prompt
+# -----------------------------
+
+# Initialize step 21 flag
+if "proceed_step21" not in st.session_state:
+    st.session_state.proceed_step21 = False
+
+if st.session_state.step == 21:
+    st.write(f"Hi {st.session_state.name},")
+    st.write(f"Thanks for choosing {st.session_state.selected_hotel['name']} for your stay. Hope you had a wonderful time!")
+
+    st.write("We would love your feedback on your experience.")
+
+    if st.button("Provide Feedback / Proceed"):
+        st.session_state.proceed_step21 = True
+
+if st.session_state.proceed_step21:
+    st.session_state.step = 22
+    st.session_state.proceed_step21 = False  # reset flag
+
+# -----------------------------
+# Step 22: Loyalty Offer
+# -----------------------------
+
+# Initialize step 22 flag
+if "proceed_step22" not in st.session_state:
+    st.session_state.proceed_step22 = False
+
+if st.session_state.step == 22:
+    st.write(f"As an esteemed member of our {st.session_state.selected_hotel.get('chain_name', 'Hotel Chain')},")
+    st.write("We are happy to share a 2 night & 3 day weekend stay at any of our properties at flat 50% discount.")
+    st.write("You can avail this offer within 365 days by logging in with your registered email.")
+
+    if st.button("Claim Offer / Finish"):
+        st.session_state.proceed_step22 = True
+        st.success("Thank you! Your loyalty offer has been recorded.")
+
+if st.session_state.proceed_step22:
+    st.write("🎉 We hope to welcome you back soon!")
+    st.session_state.step = 23  # final step
+    st.session_state.proceed_step22 = False
+
         reset_chat()
