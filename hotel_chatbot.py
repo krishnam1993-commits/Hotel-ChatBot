@@ -112,4 +112,62 @@ preferences = {
 }
 
 # ---- Chatbot Flow ----
-st.title("🏨 Hotel Booking Assistant"
+st.title("🏨 Hotel Booking Assistant")
+
+# Step 0: Greeting
+if st.session_state.step == 0:
+    st.write("👋 Hello! Welcome to our Hotel Booking Assistant.")
+    if st.button("Start Chat"):
+        st.session_state.step = 1
+
+# Step 1: Ask name
+elif st.session_state.step == 1:
+    st.write("May I know your name?")
+    name = st.text_input("Enter your name", value=st.session_state.name)
+    if st.button("Submit Name"):
+        if name.strip():
+            st.session_state.name = name.strip()
+            st.session_state.step = 2
+
+# Step 2: Destination
+elif st.session_state.step == 2:
+    st.write(f"Nice to meet you, **{st.session_state.name}**! 🌟")
+    st.write("Where would you like to go?")
+    destination = st.radio(
+        "Choose your destination:",
+        ["Hawaii (Beach)", "Vail, Colorado (Skiing)", "New York City (Music Concerts)"]
+    )
+    if st.button("Confirm Destination"):
+        if "Hawaii" in destination:
+            st.session_state.destination = "Hawaii"
+        elif "Vail" in destination:
+            st.session_state.destination = "Vail"
+        else:
+            st.session_state.destination = "New York"
+        st.session_state.step = 3
+
+# Step 3: Preferences
+elif st.session_state.step == 3:
+    dest = st.session_state.destination
+    st.write(f"Based on your previous stay preferences for **{dest}**, we are considering:")
+    st.info(preferences[dest])
+    if st.button("Go for Hotel Options"):
+        st.session_state.step = 4
+
+# Step 4: Hotels
+elif st.session_state.step == 4:
+    dest = st.session_state.destination
+    st.write(f"Here are some hotel options in **{dest}**:")
+    for hotel in hotel_options[dest]:
+        st.markdown(
+            f"**{hotel['name']}**  \n"
+            f"{hotel['rating']}  \n"
+            f"{hotel['desc']}  \n"
+            f"📞 {hotel['phone']}  \n"
+            f"💰 {hotel['price']}"
+        )
+        st.divider()
+    st.success("✅ End of chatbot demo flow!")
+    if st.button("Restart Chat"):
+        st.session_state.clear()
+        st.session_state.step = 0
