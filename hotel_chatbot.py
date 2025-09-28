@@ -533,7 +533,7 @@ if st.session_state.step == 19:
 
 if st.session_state.step == 20:
 
-    # Safely get hotel name
+    # Ensure selected_hotel exists
     hotel_name = st.session_state.selected_hotel.get("name", "your hotel") \
         if st.session_state.selected_hotel else "your hotel"
 
@@ -549,10 +549,18 @@ if st.session_state.step == 20:
     if st.session_state.breakfast_request:
         st.write("✅ Schedule breakfast in room")
 
-    # Only move to next step when this button is clicked
+    # Initialize proceed flag
+    if "proceed_step20" not in st.session_state:
+        st.session_state.proceed_step20 = False
+
+    # Button click sets flag
     if st.button("Proceed Further"):
+        st.session_state.proceed_step20 = True
+
+    # Advance step only if flag is True
+    if st.session_state.proceed_step20:
         st.session_state.step = 21
-        st.experimental_rerun()  # show Step 21 immediately
+        st.experimental_rerun()  # show next step immediately
 
 
 
