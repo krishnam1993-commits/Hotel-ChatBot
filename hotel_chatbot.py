@@ -52,18 +52,98 @@ preferences = {
 
 hotel_options = {
     "Hawaii": [
-        {"name": "Mauna Kea Beach Hotel", "rating": "4.6⭐", "desc": "Upscale beachfront with sea views.", "phone": "(808) 882-7222", "price": 632},
-        {"name": "Hilton Hawaiian Village", "rating": "4.2⭐", "desc": "Sprawling oceanfront resort.", "phone": "(808) 949-4321", "price": 714},
+        {
+            "name": "Mauna Kea Beach Hotel, Autograph Collection",
+            "rating": "4.6⭐ (1,563 reviews)",
+            "desc": "Upscale, beachfront resort featuring airy rooms, many with balconies and sea views.",
+            "phone": "(808) 882-7222",
+            "price": 632,
+        },
+        {
+            "name": "Hilton Hawaiian Village Waikiki Beach Resort",
+            "rating": "4.2⭐ (25,213 reviews)",
+            "desc": "Sprawling oceanfront resort on Waikiki Beach; high-rise rooms with sea view balconies.",
+            "phone": "(808) 949-4321",
+            "price": 714,
+        },
+        {
+            "name": "Waikoloa Beach Marriott Resort & Spa",
+            "rating": "4.4⭐ (3,743 reviews)",
+            "desc": "Classy beachfront hotel with modern deluxe rooms, breakfast included, close to surf.",
+            "phone": "(808) 886-6789",
+            "price": 578,
+        },
+        {
+            "name": "Castle Kona Bali Kai",
+            "rating": "4.0⭐ (485 reviews)",
+            "desc": "Oceanfront condos featuring lanais (balconies), some with sea views, pool & breakfast.",
+            "phone": "(808) 329-9381",
+            "price": 540,
+        },
     ],
     "Vail": [
-        {"name": "The Arrabelle at Vail Square", "rating": "4.6⭐", "desc": "Elegant hotel with mountain views.", "phone": "(888) 688-8055", "price": 399},
-        {"name": "The Ritz-Carlton Club, Vail", "rating": "4.7⭐", "desc": "Sophisticated villas with snow views.", "phone": "(970) 477-3700", "price": 1799},
+        {
+            "name": "The Arrabelle at Vail Square",
+            "rating": "4.6⭐ (697 reviews)",
+            "desc": "Elegant hotel with mountain views, rooftop pool, fine dining, central Vail location.",
+            "phone": "(888) 688-8055",
+            "price": 399,
+        },
+        {
+            "name": "The Ritz-Carlton Club, Vail",
+            "rating": "4.7⭐ (377 reviews)",
+            "desc": "Sophisticated villas with balconies, snow views, premium service near ski lifts.",
+            "phone": "(970) 477-3700",
+            "price": 1799,
+        },
+        {
+            "name": "Highline Vail - a DoubleTree by Hilton",
+            "rating": "4.2⭐ (944 reviews)",
+            "desc": "Refined rooms & suites, mountain views, breakfast option, free shuttle to lifts.",
+            "phone": "(970) 476-2739",
+            "price": 662,
+        },
+        {
+            "name": "Vail's Mountain Haus",
+            "rating": "4.4⭐ (252 reviews)",
+            "desc": "Polished resort, free breakfast, outdoor pool, hot tubs, walking distance to lifts.",
+            "phone": "(970) 476-2434",
+            "price": 662,
+        },
     ],
     "New York": [
-        {"name": "Hotel Mulberry", "rating": "4.3⭐", "desc": "Contemporary rooms near Chinatown.", "phone": "(212) 385-4633", "price": 499},
-        {"name": "Hampton Inn Brooklyn", "rating": "4.4⭐", "desc": "Suites with balconies, subway nearby.", "phone": "(718) 875-8800", "price": 399},
+        {
+            "name": "Hotel Mulberry",
+            "rating": "4.3⭐ (439 reviews)",
+            "desc": "Contemporary rooms with terraces/city views, free breakfast, near subways.",
+            "phone": "(212) 385-4633",
+            "price": 499,
+        },
+        {
+            "name": "Hampton Inn Brooklyn/Downtown",
+            "rating": "4.4⭐ (2,551 reviews)",
+            "desc": "Modern suites, free breakfast, easy subway access at Jay St-MetroTech.",
+            "phone": "(718) 875-8800",
+            "price": 399,
+        },
+        {
+            "name": "The Washington Hotel NYC",
+            "rating": "3.8⭐ (2,057 reviews)",
+            "desc": "Premium hotel with terraces, breakfast available, close to Wall St & Rector St.",
+            "phone": "(646) 826-8600",
+            "price": 399,
+        },
+        {
+            "name": "Madison LES Hotel",
+            "rating": "4.0⭐ (819 reviews)",
+            "desc": "Informal hotel, free breakfast buffet, rooftop terrace, near East Broadway subway.",
+            "phone": "(212) 390-1533",
+            "price": 399,
+        },
     ]
 }
+
+
 
 activities = {
     "Hawaii": ["Sailing", "Scuba diving", "Beach & Night party", "Jet Skiing"],
