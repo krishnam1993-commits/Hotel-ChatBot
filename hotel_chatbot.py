@@ -200,7 +200,6 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     d = st.session_state.destination
     st.write("Based on your previous stay preferences, we are considering:")
-    # show all options listed as per the flow requested
     if d == "Hawaii":
         st.markdown(f"- **Preference:** {preferences['Hawaii']}")
     elif d == "Vail":
@@ -215,17 +214,14 @@ elif st.session_state.step == 4:
     d = st.session_state.destination
     st.write(f"Stay options for **{d}**")
     hotels = hotel_options[d]
-    # display options exactly as provided
     for idx, h in enumerate(hotels, start=1):
         st.markdown(f"**Option-{idx}**  \n**{h['name']}**  \n{h['rating']}  \n{h['desc']}  \n**Directions** {h['phone']}  \n**Price- ${h['price']} per night (inclusive of all taxes)**")
         st.divider()
-    # let guest choose by option number
     chosen = st.radio("Select hotel option:", [f"Option-{i}" for i in range(1, len(hotels)+1)])
     if st.button("Confirm Hotel Selection"):
         sel_idx = int(chosen.split("-")[1]) - 1
         st.session_state.selected_hotel_index = sel_idx
         st.session_state.selected_hotel = hotels[sel_idx]
-        # set base price as per-night
         st.session_state.total_price = st.session_state.selected_hotel["price"]
         st.session_state.step = 5
 
@@ -248,7 +244,6 @@ elif st.session_state.step == 6:
     for a in activities[d]:
         st.markdown(f"- {a}")
     if st.button("Proceed with suggestions"):
-        # add activity price fixed $2500
         st.session_state.activity_price = 2500
         st.session_state.activities_confirmed = True
         st.session_state.step = 9
@@ -257,13 +252,31 @@ elif st.session_state.step == 6:
         st.session_state.activities_confirmed = False
         st.session_state.step = 9
 
-# Step 11: Ask customer to proceed with shared options and show price summary
+# Step 11: Price summary - SAFELY access selected_hotel
 elif st.session_state.step == 9:
-    # price summary logic
-    base = st.session_state.selected_hotel["price"]
+    # ensure selected_hotel exists (recover from index if possible)
+    if not st.session_state.selected_hotel:
+        idx = st.session_state.selected_hotel_index
+        dest = st.session_state.destination
+        if idx is not None and dest and dest in hotel_options:
+            try:
+                st.session_state.selected_hotel = hotel_options[dest][idx]
+            except Exception:
+                st.warning("Selected hotel not found. Please re-select a hotel.")
+                if st.button("Go back to hotel options"):
+                    st.session_state.step = 4
+                st.stop()
+        else:
+            st.warning("No hotel selected. Please select a hotel first.")
+            if st.button("Go to hotel options"):
+                st.session_state.step = 4
+            st.stop()
+
+    base = st.session_state.selected_hotel.get("price", 0)
     st.session_state.total_price = base
     if st.session_state.activities_confirmed:
         st.session_state.total_price = base + st.session_state.activity_price
+
     st.write("### Price Summary")
     st.write(f"Hotel stay: ${base} per night")
     if st.session_state.activities_confirmed:
@@ -271,7 +284,7 @@ elif st.session_state.step == 9:
     else:
         st.write("Activities: Skipped")
     st.write(f"**Total: ${st.session_state.total_price}**")
-    # Step 12: radio to ask customer to proceed with payment
+
     proceed_radio = st.radio("Do you want to proceed with the payment?", ("Proceed to Payment", "Cancel"))
     if st.button("Confirm Payment Option"):
         if proceed_radio == "Proceed to Payment":
@@ -286,10 +299,8 @@ elif st.session_state.step == 9:
 elif st.session_state.step == 10:
     st.write("A payment link has been sent via sms to your mobile number. Please make the payment in 10 minutes and proceed with the booking")
     st.write("Thanks for booking with us. We are excited to host you for a wonderful stay experience")
-    # Step 14: Ask to click on "Yay!!!"
     if st.button("Yay!!!"):
-        # proceed to next
-        st.session_state.step = 15  # as per your flow: next section after Yay!!!
+        st.session_state.step = 15
     else:
         st.info("Click 'Yay!!!' when you have completed payment to continue.")
 
@@ -300,7 +311,6 @@ elif st.session_state.step == 15:
     st.write(f"We are excited to host you for your upcoming stay with us at {hotel_name}")
     st.write("Before you arrive, we just want to remind you to keep the following documents handy with you for smooth experience")
     st.markdown("- a) Identity card\n- b) Health issues related documents\n- c) Travel insurance\n- d) Booking confirmation receipt")
-    # Step 17 message
     st.write("We would ask you to spend a minute with us to personalize your experience during the stay.")
     if st.button("Okay"):
         st.session_state.step = 18
