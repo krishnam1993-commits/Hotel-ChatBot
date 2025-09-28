@@ -1,173 +1,169 @@
 import streamlit as st
 
-st.set_page_config(page_title="Hotel Booking Chatbot", page_icon="🏨")
+st.set_page_config(page_title="Hotel Concierge Bot", page_icon="🏨", layout="centered")
 
-# ---- Initialize Session State ----
+# Initialize session state
 if "step" not in st.session_state:
     st.session_state.step = 0
-if "name" not in st.session_state:
-    st.session_state.name = ""
+if "guest_name" not in st.session_state:
+    st.session_state.guest_name = ""
 if "destination" not in st.session_state:
     st.session_state.destination = ""
+if "hotel" not in st.session_state:
+    st.session_state.hotel = ""
+if "activities" not in st.session_state:
+    st.session_state.activities = False
+if "allergies" not in st.session_state:
+    st.session_state.allergies = ""
+if "gym_time" not in st.session_state:
+    st.session_state.gym_time = ""
+if "service" not in st.session_state:
+    st.session_state.service = ""
 
-# ---- Hotel Options ----
-hotel_options = {
+# Hotel options
+hotel_data = {
     "Hawaii": [
-        {
-            "name": "Mauna Kea Beach Hotel, Autograph Collection",
-            "rating": "4.6⭐ (1,563 reviews)",
-            "desc": "Upscale beachfront resort with airy rooms, balconies, and sea views.",
-            "phone": "(808) 882-7222",
-            "price": "$632 per night (all taxes included)"
-        },
-        {
-            "name": "Hilton Hawaiian Village Waikiki Beach Resort",
-            "rating": "4.2⭐ (25,213 reviews)",
-            "desc": "Large oceanfront resort with sea-view rooms and breakfast options.",
-            "phone": "(808) 949-4321",
-            "price": "$714 per night (all taxes included)"
-        },
-        {
-            "name": "Waikoloa Beach Marriott Resort & Spa",
-            "rating": "4.4⭐ (3,743 reviews)",
-            "desc": "Modern beachfront hotel with deluxe rooms and easy beach access.",
-            "phone": "(808) 886-6789",
-            "price": "$578 per night (all taxes included)"
-        },
-        {
-            "name": "Castle Kona Bali Kai",
-            "rating": "4⭐ (485 reviews)",
-            "desc": "Oceanfront condos with balconies, pool, and breakfast available.",
-            "phone": "(808) 329-9381",
-            "price": "$540 per night (all taxes included)"
-        }
+        ("Mauna Kea Beach Hotel, Autograph Collection", 632),
+        ("Hilton Hawaiian Village Waikiki Beach Resort", 714),
+        ("Waikoloa Beach Marriott Resort & Spa", 578),
+        ("Castle Kona Bali Kai", 540)
     ],
     "Vail": [
-        {
-            "name": "The Arrabelle at Vail Square",
-            "rating": "4.6⭐ (697 reviews)",
-            "desc": "Elegant hotel with mountain views, rooftop pool, and fine dining.",
-            "phone": "(888) 688-8055",
-            "price": "$399 per night (all taxes included)"
-        },
-        {
-            "name": "The Ritz-Carlton Club, Vail",
-            "rating": "4.7⭐ (377 reviews)",
-            "desc": "Luxury villas with snow views, outdoor pool, and premium service.",
-            "phone": "(970) 477-3700",
-            "price": "$1799 per night (all taxes included)"
-        },
-        {
-            "name": "Highline Vail - a DoubleTree by Hilton",
-            "rating": "4.2⭐ (944 reviews)",
-            "desc": "Refined rooms with mountain views, onsite dining, and free shuttle.",
-            "phone": "(970) 476-2739",
-            "price": "$662 per night (all taxes included)"
-        },
-        {
-            "name": "Vail's Mountain Haus",
-            "rating": "4.4⭐ (252 reviews)",
-            "desc": "Resort with breakfast, Wi-Fi, pool, and hot tubs.",
-            "phone": "(970) 476-2434",
-            "price": "$662 per night (all taxes included)"
-        }
+        ("The Arrabelle at Vail Square", 399),
+        ("The Ritz-Carlton Club, Vail", 1799),
+        ("Highline Vail - a DoubleTree by Hilton", 662),
+        ("Vail's Mountain Haus", 662)
     ],
-    "New York": [
-        {
-            "name": "The Standard, High Line",
-            "rating": "4.4⭐ (5,321 reviews)",
-            "desc": "Trendy hotel with city views and close to music venues.",
-            "phone": "(212) 645-4646",
-            "price": "$550 per night (all taxes included)"
-        },
-        {
-            "name": "The Plaza Hotel",
-            "rating": "4.6⭐ (8,743 reviews)",
-            "desc": "Iconic luxury hotel with central location and fine dining.",
-            "phone": "(212) 759-3000",
-            "price": "$899 per night (all taxes included)"
-        },
-        {
-            "name": "CitizenM New York Times Square",
-            "rating": "4.5⭐ (2,198 reviews)",
-            "desc": "Modern boutique hotel with non-smoking rooms and breakfast.",
-            "phone": "(212) 461-3638",
-            "price": "$420 per night (all taxes included)"
-        },
-        {
-            "name": "Arlo Midtown",
-            "rating": "4.3⭐ (3,045 reviews)",
-            "desc": "Stylish hotel with subway access and breakfast available.",
-            "phone": "(212) 343-7000",
-            "price": "$380 per night (all taxes included)"
-        }
+    "NYC": [
+        ("Hotel Mulberry", 499),
+        ("Hampton Inn Brooklyn/Downtown", 399),
+        ("The Washington Hotel NYC", 399),
+        ("Madison LES Hotel", 399)
     ]
 }
 
-# ---- Preferences ----
-preferences = {
-    "Hawaii": "Deluxe room, balcony with sea view, non-smoking, breakfast included, accessibility near the beach.",
-    "Vail": "Deluxe room, balcony with snow view, non-smoking, breakfast included, accessibility near the mountains.",
-    "New York": "Deluxe room, balcony with city view, non-smoking, breakfast included, accessibility near the subway."
+# Activity bundles
+activity_data = {
+    "Hawaii": ["6 Dec - Private Yacht Sailing & Whale Watching", 
+               "7 Dec - Scuba Diving (2 dives)", 
+               "8 Dec - Beach Party at Beach Bar Club", 
+               "9 Dec - Jet Skiing"],
+    "Vail": ["6 Dec - Skiing with lunch", 
+             "7 Dec - Snowshoeing at Lost Lake Trail", 
+             "8 Dec - Bonfire Night", 
+             "9 Dec - Leisure Day"],
+    "NYC": ["6 Dec - Concert Day", 
+            "7 Dec - Guided City Tour", 
+            "8 Dec - Lunch at Michelin Star Bungalow", 
+            "9 Dec - Leisure Day"]
 }
 
-# ---- Chatbot Flow ----
-st.title("🏨 Hotel Booking Assistant")
-
-# Step 0: Greeting
+# Steps flow
 if st.session_state.step == 0:
-    st.write("👋 Hello! Welcome to our Hotel Booking Assistant.")
-    if st.button("Start Chat"):
+    st.write("👋 Hi there! Welcome to our Hotel Concierge Bot.")
+    if st.button("Start"):
         st.session_state.step = 1
 
-# Step 1: Ask name
 elif st.session_state.step == 1:
-    st.write("May I know your name?")
-    name = st.text_input("Enter your name", value=st.session_state.name)
+    st.write("May I have your name please?")
+    name = st.text_input("Enter your name")
     if st.button("Submit Name"):
-        if name.strip():
-            st.session_state.name = name.strip()
+        if name:
+            st.session_state.guest_name = name
             st.session_state.step = 2
 
-# Step 2: Destination
 elif st.session_state.step == 2:
-    st.write(f"Nice to meet you, **{st.session_state.name}**! 🌟")
-    st.write("Where would you like to go?")
-    destination = st.radio(
-        "Choose your destination:",
-        ["Hawaii (Beach)", "Vail, Colorado (Skiing)", "New York City (Music Concerts)"]
-    )
+    st.write(f"Nice to meet you, **{st.session_state.guest_name}**! Where would you like to go?")
+    choice = st.radio("Select destination", ["Hawaii (Beaches)", "Vail (Skiing)", "NYC (Concerts)"])
     if st.button("Confirm Destination"):
-        if "Hawaii" in destination:
+        if "Hawaii" in choice:
             st.session_state.destination = "Hawaii"
-        elif "Vail" in destination:
+        elif "Vail" in choice:
             st.session_state.destination = "Vail"
         else:
-            st.session_state.destination = "New York"
+            st.session_state.destination = "NYC"
         st.session_state.step = 3
 
-# Step 3: Preferences
 elif st.session_state.step == 3:
-    dest = st.session_state.destination
-    st.write(f"Based on your previous stay preferences for **{dest}**, we are considering:")
-    st.info(preferences[dest])
+    st.write(f"Based on your previous stay preferences in **{st.session_state.destination}**, we suggest:")
+    if st.session_state.destination == "Hawaii":
+        st.markdown("- Deluxe room, balcony with sea view, no smoking room, breakfast included, near the beach 🌊")
+    elif st.session_state.destination == "Vail":
+        st.markdown("- Deluxe room, balcony with snow view, no smoking room, breakfast included, near the mountains ⛰️")
+    else:
+        st.markdown("- Deluxe room, balcony with city view, no smoking room, breakfast included, near the subway 🚇")
     if st.button("Go for Hotel Options"):
         st.session_state.step = 4
 
-# Step 4: Hotels
 elif st.session_state.step == 4:
-    dest = st.session_state.destination
-    st.write(f"Here are some hotel options in **{dest}**:")
-    for hotel in hotel_options[dest]:
-        st.markdown(
-            f"**{hotel['name']}**  \n"
-            f"{hotel['rating']}  \n"
-            f"{hotel['desc']}  \n"
-            f"📞 {hotel['phone']}  \n"
-            f"💰 {hotel['price']}"
-        )
-        st.divider()
-    st.success("✅ End of chatbot demo flow!")
-    if st.button("Restart Chat"):
-        st.session_state.clear()
-        st.session_state.step = 0
+    st.write(f"Here are some hotel options in **{st.session_state.destination}**:")
+    options = hotel_data[st.session_state.destination]
+    hotel_choice = st.radio("Choose your hotel", [f"{h} - ${p}/night" for h, p in options])
+    if st.button("Confirm Hotel"):
+        st.session_state.hotel = hotel_choice
+        st.session_state.step = 5
+
+elif st.session_state.step == 5:
+    st.write("Would you like to explore activities?")
+    act_choice = st.radio("Select", ["Show Suggestions", "Skip"])
+    if st.button("Confirm Activity Choice"):
+        if act_choice == "Show Suggestions":
+            st.session_state.activities = True
+        st.session_state.step = 6
+
+elif st.session_state.step == 6:
+    if st.session_state.activities:
+        st.write("Here are some activity suggestions:")
+        for a in activity_data[st.session_state.destination]:
+            st.markdown(f"- {a}")
+    if st.button("Proceed with Options"):
+        st.session_state.step = 7
+
+elif st.session_state.step == 7:
+    st.write("💰 Price Summary")
+    hotel_price = int(st.session_state.hotel.split("$")[-1].split("/")[0])
+    nights = 4  # Example stay duration
+    total = hotel_price * nights
+    if st.session_state.activities:
+        total += 2500
+        st.markdown(f"- Hotel stay: ${hotel_price} x {nights} nights = ${hotel_price * nights}")
+        st.markdown("- Activities package = $2500")
+    st.markdown(f"**Total = ${total}**")
+    proceed = st.radio("Proceed with payment?", ["Yes", "No"])
+    if proceed == "Yes":
+        st.session_state.step = 8
+
+elif st.session_state.step == 8:
+    st.success("✅ A payment link has been sent via SMS. Please complete payment within 10 minutes.")
+    st.write("Thanks for booking with us! We are excited to host you for a wonderful stay experience.")
+    if st.button("Yay!!!"):
+        st.session_state.step = 9
+
+elif st.session_state.step == 9:
+    st.write(f"Hi, Welcome **{st.session_state.guest_name}** 🎉")
+    st.write(f"We are excited to host you at **{st.session_state.hotel.split('-')[0]}**.")
+    st.write("Before you arrive, please keep handy:")
+    st.markdown("- Identity Card\n- Health documents\n- Travel insurance\n- Booking confirmation receipt")
+    if st.button("Okay"):
+        st.session_state.step = 10
+
+elif st.session_state.step == 10:
+    st.write("We’d like to personalize your stay experience.")
+    allergy = st.text_input("Please describe food allergy (type NA if none)")
+    gym = st.text_input("Please confirm if you want to use gym (enter time in 24hr format, or NA)")
+    if st.button("Submit Preferences"):
+        st.session_state.allergies = allergy
+        st.session_state.gym_time = gym
+        st.session_state.step = 11
+
+elif st.session_state.step == 11:
+    st.write(f"Hi {st.session_state.guest_name}, please select from services available today:")
+    service = st.radio("Select a service", ["Wake Up Call at 7AM", "Laundry", "Call cab", "Schedule breakfast in room"])
+    if st.button("Confirm Service"):
+        st.session_state.service = service
+        st.session_state.step = 12
+
+elif st.session_state.step == 12:
+    st.success(f"Thanks for the confirmation. We will {st.session_state.service}.")
+    st.write(f"Hi {st.session_state.guest_name}, thanks for choosing {st.session_state.hotel.split('-')[0]}. We hope you had a wonderful stay!")
+    st.write("As a valued guest, enjoy a **2 nights & 3 days weekend stay at 50% discount** at any of ou
