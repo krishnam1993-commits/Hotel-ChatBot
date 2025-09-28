@@ -464,8 +464,13 @@ if st.session_state.proceed_personalization:
 
 
 # -----------------------------
+# -----------------------------
 # Step 19: In-stay Services Selection
 # -----------------------------
+
+# Initialize flag
+if "proceed_services" not in st.session_state:
+    st.session_state.proceed_services = False
 
 st.write(f"Hi {st.session_state.name}, we hope you are having a wonderful experience during your stay.")
 st.write("Please select from the options below:")
@@ -496,9 +501,13 @@ if st.button("Confirm Services"):
     for service in selected_services:
         st.success(f"Thanks for the confirmation. We will {service} ✅")
 
-    # Move to next step (Step 20)
-    st.session_state.step = 20
+    # Set flag to move to next step
+    st.session_state.proceed_services = True
 
+# Move to next step if flag is True
+if st.session_state.proceed_services:
+    st.session_state.step = 20
+    st.session_state.proceed_services = False  # reset flag
 
 
 
