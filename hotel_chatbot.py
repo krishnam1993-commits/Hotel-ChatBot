@@ -528,7 +528,7 @@ if st.session_state.step == 19:
 
 # =====================
 # Step 20: Service Confirmation Display
-Step 20: Service Confirmation Display
+#Step 20: Service Confirmation Display
 # -----------------------------
 
 if st.session_state.step == 20:
