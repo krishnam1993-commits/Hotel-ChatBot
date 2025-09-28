@@ -260,6 +260,7 @@ elif st.session_state.step == 8:
     checkout = datetime.strptime(st.session_state.checkout, "%Y-%m-%d")
     nights = (checkout - checkin).days
     base = hotel["price"] * nights
+
     if st.session_state.activity_choice == "Show suggestions":
         total = base + 2500
         st.session_state.final_price = total
@@ -270,10 +271,13 @@ elif st.session_state.step == 8:
         total = base
         st.session_state.final_price = total
         st.success(f"💰 Total Price for {nights} nights: ${total}")
-   st.write(f"💰 Total Price: ${st.session_state.final_price}")
 
-if st.button("Proceed to Payment"):
-    st.session_state.step = 9
+    # ✅ Use a button, not radio, to proceed
+    if st.button("Proceed to Payment"):
+        st.session_state.step = 9
+
+
+
 
 # Step 9: Payment
 elif st.session_state.step == 9:
