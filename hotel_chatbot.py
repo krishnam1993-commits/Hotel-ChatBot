@@ -637,4 +637,4 @@ if st.session_state.proceed_step22:
     st.session_state.step = 23  # final step
     st.session_state.proceed_step22 = False
 
-       reset_chat()
+reset_chat()
