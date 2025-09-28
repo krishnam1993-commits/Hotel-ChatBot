@@ -418,6 +418,9 @@ if "allergy" not in st.session_state:
 if "gym_use" not in st.session_state:
     st.session_state.gym_use = ""
 
+if "proceed_personalization" not in st.session_state:
+    st.session_state.proceed_personalization = False
+
 st.write("We would ask you to spend a minute with us to personalize your experience during the stay.")
 
 # Allergy input
@@ -436,9 +439,28 @@ gym_input = st.text_input(
 if st.button("Proceed"):
     st.session_state.allergy = allergy_input.strip()
     st.session_state.gym_use = gym_input.strip()
+    st.session_state.proceed_personalization = True
     st.success("Thanks for your confirmation!")
-    # Move to next step (e.g., Step 19)
+
+# Move to next step if proceed flag is True
+if st.session_state.proceed_personalization:
     st.session_state.step = 19
+    st.session_state.proceed_personalization = False  # reset flag for next run
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Step 19: In-stay options (guest has checked-in)
