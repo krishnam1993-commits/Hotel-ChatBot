@@ -1,256 +1,295 @@
-# hotel_chatbot.py
 import streamlit as st
+from datetime import datetime, timedelta
 
-st.set_page_config(page_title="Hotel Booking Chatbot", page_icon="🏨", layout="centered")
+# -----------------------------
+# Reset function
+# -----------------------------
+def reset_chat():
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.session_state.step = 0
 
-# ----------------- Session state init -----------------
+# -----------------------------
+# Initialize session state
+# -----------------------------
 if "step" not in st.session_state:
     st.session_state.step = 0
 if "name" not in st.session_state:
     st.session_state.name = ""
 if "destination" not in st.session_state:
     st.session_state.destination = ""
-if "selected_hotel_index" not in st.session_state:
-    st.session_state.selected_hotel_index = None
 if "selected_hotel" not in st.session_state:
     st.session_state.selected_hotel = None
 if "activity_choice" not in st.session_state:
-    st.session_state.activity_choice = None
-if "activities_confirmed" not in st.session_state:
-    st.session_state.activities_confirmed = False
-if "activity_price" not in st.session_state:
-    st.session_state.activity_price = 0
-if "total_price" not in st.session_state:
-    st.session_state.total_price = 0
-if "payment_proceed" not in st.session_state:
-    st.session_state.payment_proceed = False
-if "allergy" not in st.session_state:
-    st.session_state.allergy = ""
-if "gym_time" not in st.session_state:
-    st.session_state.gym_time = ""
-if "instay_service" not in st.session_state:
-    st.session_state.instay_service = ""
-if "feedback_claim" not in st.session_state:
-    st.session_state.feedback_claim = False
+    st.session_state.activity_choice = ""
+if "final_price" not in st.session_state:
+    st.session_state.final_price = 0
+if "checkin" not in st.session_state:
+    st.session_state.checkin = None
+if "checkout" not in st.session_state:
+    st.session_state.checkout = None
 
-# ----------------- Hotel data -----------------
-hotel_options = {
-    "Hawaii": [
-        {
-            "name": "Mauna Kea Beach Hotel, Autograph Collection",
-            "rating": "4.6 star rating (1,563 reviews)",
-            "desc": "Upscale, beachfront resort featuring airy rooms, many with balconies and sea views. Highly rated for ocean access, luxury accommodations, accessibility, and on-site dining—including breakfast packages.",
-            "phone": "(808) 882-7222",
-            "price": 632
-        },
-        {
-            "name": "Hilton Hawaiian Village Waikiki Beach Resort",
-            "rating": "4.2 star rating (25,213 reviews)",
-            "desc": "Sprawling oceanfront resort on Waikiki Beach; high-rise rooms with sea view balconies available. Wide range of amenities, breakfast options, and non-smoking room preference supported.",
-            "phone": "(808) 949-4321",
-            "price": 714
-        },
-        {
-            "name": "Waikoloa Beach Marriott Resort & Spa",
-            "rating": "4.4 star rating (3,743 reviews)",
-            "desc": "Classy beachfront hotel with modern deluxe rooms and suites, often with sea-view balconies. Includes breakfast, accessible location, and close proximity to sand and surf.",
-            "phone": "(808) 886-6789",
-            "price": 578
-        },
-        {
-            "name": "Castle Kona Bali Kai",
-            "rating": "4 Star Rating (485 reviews)",
-            "desc": "Oceanfront condos featuring lanais (balconies), select units with sea views, non-smoking available. Beachfront, pool, and breakfast offered.",
-            "phone": "(808) 329-9381",
-            "price": 540
-        }
-    ],
-    "Vail": [
-        {
-            "name": "The Arrabelle at Vail Square",
-            "rating": "4.6 star rating (697 reviews)",
-            "desc": "Elegant hotel with rooms featuring balconies and mountain views, rooftop pool, fine dining, and cozy lounge. Central Vail location offers easy access to lifts and town.",
-            "phone": "(888) 688-8055",
-            "price": 399
-        },
-        {
-            "name": "The Ritz-Carlton Club, Vail",
-            "rating": "4.7 star rating (377 reviews)",
-            "desc": "Sophisticated villas with balconies and mountain/snow views; premium service and outdoor pool. Check for breakfast package and non-smoking room when booking. Located near ski lifts and mountain activities.",
-            "phone": "(970) 477-3700",
-            "price": 1799
-        },
-        {
-            "name": "Highline Vail - a DoubleTree by Hilton",
-            "rating": "4.2 star rating (944 reviews)",
-            "desc": "Refined rooms and suites, some with balcony and mountain views. Onsite dining, breakfast option, and free mountain shuttle. Confirm balcony/snow view room and breakfast inclusion at reservation.",
-            "phone": "(970) 476-2739",
-            "price": 662
-        },
-        {
-            "name": "Vail's Mountain Haus",
-            "rating": "4.4 star rating (252 reviews)",
-            "desc": "Polished resort offering free breakfast and Wi-Fi, outdoor pool and hot tubs. Deluxe rooms available with balcony overlooking the mountains/snow. Walking distance to lifts and central Vail.",
-            "phone": "(970) 476-2434",
-            "price": 662
-        }
-    ],
-    "New York": [
-        {
-            "name": "Hotel Mulberry",
-            "rating": "4.3 star rating (439 reviews)",
-            "desc": "Contemporary rooms & suites, some with terraces or city views, plus free breakfast & WiFi. Located in Chinatown, very close to multiple subway stations.",
-            "phone": "(212) 385-4633",
-            "price": 499
-        },
-        {
-            "name": "Hampton Inn Brooklyn/Downtown",
-            "rating": "4.4 star rating (2,551 reviews)",
-            "desc": "Contemporary hotel with suites that include balconies, free hot breakfast, and easy subway access at Jay St-MetroTech. Non-smoking and accessibility included.",
-            "phone": "(718) 875-8800",
-            "price": 399
-        },
-        {
-            "name": "The Washington Hotel NYC",
-            "rating": "3.8 star rating (2,057 reviews)",
-            "desc": "Premium hotel with terraces offering city views. Sleek rooms, breakfast available, convenient access to Wall St and Rector St subway stops.",
-            "phone": "(646) 826-8600",
-            "price": 399
-        },
-        {
-            "name": "Madison LES Hotel",
-            "rating": "4 star rating (819 reviews)",
-            "desc": "Informal hotel offering a free hot breakfast buffet, rooftop terrace with views, and proximity to East Broadway subway.",
-            "phone": "(212) 390-1533",
-            "price": 399
-        }
-    ]
+# -----------------------------
+# Data
+# -----------------------------
+preferences = {
+    "Hawaii": "Deluxe room, balcony with sea view, non-smoking, breakfast included, accessibility near the beach.",
+    "Vail": "Deluxe room, balcony with snow view, non-smoking, breakfast included, accessibility near the mountains.",
+    "New York": "Deluxe room, balcony with city view, non-smoking, breakfast included, accessibility near the subway."
 }
 
-preferences = {
-    "Hawaii": "deluxe room, balcony with sea view, no smoking room, breakfast included, accessibility- near to beach.",
-    "Vail": "deluxe room, balcony with snow view, no smoking room, breakfast included, accessibility- near to mountains.",
-    "New York": "deluxe room, balcony with city view, no smoking room, breakfast included, accessibility- near to subway."
+hotel_options = {
+    "Hawaii": [
+        {"name": "Mauna Kea Beach Hotel, Autograph Collection",
+         "rating": "4.6⭐ (1,563 reviews)",
+         "desc": "Upscale, beachfront resort featuring airy rooms, many with balconies and sea views.",
+         "phone": "(808) 882-7222",
+         "price": 632},
+        {"name": "Hilton Hawaiian Village Waikiki Beach Resort",
+         "rating": "4.2⭐ (25,213 reviews)",
+         "desc": "Sprawling oceanfront resort on Waikiki Beach; high-rise rooms with sea-view balconies.",
+         "phone": "(808) 949-4321",
+         "price": 714},
+    ],
+    "Vail": [
+        {"name": "The Arrabelle at Vail Square",
+         "rating": "4.6⭐ (697 reviews)",
+         "desc": "Elegant hotel with mountain-view rooms, rooftop pool, fine dining, cozy lounge.",
+         "phone": "(888) 688-8055",
+         "price": 399},
+        {"name": "The Ritz-Carlton Club, Vail",
+         "rating": "4.7⭐ (377 reviews)",
+         "desc": "Sophisticated villas with mountain/snow views; premium service, outdoor pool.",
+         "phone": "(970) 477-3700",
+         "price": 1799},
+    ],
+    "New York": [
+        {"name": "Hotel Mulberry",
+         "rating": "4.3⭐ (439 reviews)",
+         "desc": "Contemporary rooms with terraces, free breakfast & Wi-Fi. Chinatown, subway nearby.",
+         "phone": "(212) 385-4633",
+         "price": 499},
+        {"name": "Hampton Inn Brooklyn/Downtown",
+         "rating": "4.4⭐ (2,551 reviews)",
+         "desc": "Suites with balconies, free hot breakfast, easy subway access, non-smoking.",
+         "phone": "(718) 875-8800",
+         "price": 399},
+    ]
 }
 
 activities = {
     "Hawaii": [
-        "6th Dec- Indulge in a 6 hr Sailing with private Yacht from 11AM to 6:30 PM with sunset sailing and whale watching",
-        "7th Dec- Scuba diving with 2 dives and instructor session",
-        "8th Dec- Enjoy your day at beach & Seat at The Beach Bar Club for night party",
-        "9th Dec- Jet Skiing"
+        "Sailing with private Yacht (11AM-6:30PM, sunset & whale watching)",
+        "Scuba diving (2 dives with instructor)",
+        "Beach day & The Beach Bar Club night party",
+        "Jet Skiing"
     ],
     "Vail": [
-        "6th Dec- Indulge in a 4 hr Skiing activity with lunch",
-        "7th Dec- Snowshoeing (Winter Walk) at Lost Lake Trail",
-        "8th Dec- Enjoy a bonfire night party at the hotel",
-        "9th Dec- Leisure Day"
+        "4 hr Skiing activity with lunch",
+        "Snowshoeing at Lost Lake Trail",
+        "Bonfire night party at the hotel",
+        "Leisure Day"
     ],
     "New York": [
-        "6th Dec- Concert Day",
-        "7th Dec- Guided city tour for NYC including locations like Madison Square, Statue of Liberty, Empire State Building",
-        "8th Dec- Enjoy lunch at Bungalow ( a Michelin Star restaurant)",
-        "9th Dec- Leisure Day"
+        "Concert Day",
+        "Guided city tour (Statue of Liberty, Empire State Building, Madison Square)",
+        "Lunch at Bungalow (Michelin Star restaurant)",
+        "Leisure Day"
     ]
 }
 
-# ----------------- Helper functions -----------------
-def reset_chat():
-    st.session_state.clear()
-    st.session_state.step = 0
+# -----------------------------
+# Helper function
+# -----------------------------
+def get_activity_dates(checkin_str, acts):
+    try:
+        start = datetime.strptime(checkin_str, "%Y-%m-%d")
+        return [f"{(start + timedelta(days=i)).strftime('%d %b')} - {acts[i]}" for i in range(len(acts))]
+    except:
+        return acts
 
-# ----------------- Chat flow UI -----------------
+# -----------------------------
+# UI
+# -----------------------------
 st.title("🏨 Hotel Booking Assistant")
 
-# Step 1: Bot greets the Guest first
+# 🔄 Restart always available
+if st.button("🔄 Restart Chat"):
+    reset_chat()
+
+# Step 0: Greet
 if st.session_state.step == 0:
     st.write("👋 Hello! Welcome to our Hotel Booking Assistant.")
     if st.button("Start Chat"):
         st.session_state.step = 1
 
-# Step 2: Ask Guest name
+# Step 1: Ask name
 elif st.session_state.step == 1:
     st.write("May I know your name?")
-    name_input = st.text_input("Guest name", value=st.session_state.name)
+    name = st.text_input("Enter your name", value=st.session_state.name)
     if st.button("Submit Name"):
-        if name_input and name_input.strip():
-            st.session_state.name = name_input.strip()
+        if name.strip():
+            st.session_state.name = name.strip()
             st.session_state.step = 2
-        else:
-            st.warning("Please enter a name to proceed.")
 
-# Step 3: Ask destination with options
+# Step 2: Destination
 elif st.session_state.step == 2:
-    st.write(f"Nice to meet you, **{st.session_state.name}**!")
-    st.write("Where does the Guest want to go?")
-    dest_choice = st.radio(
-        "Choose a destination:",
-        ("Hawaii for beach", "Vail, Colorado for skiing", "NYC for music concert")
-    )
+    st.write(f"Nice to meet you, **{st.session_state.name}**! 🌟 Where would you like to go?")
+    dest = st.radio("Choose your destination:", ["Hawaii (Beach)", "Vail, Colorado (Skiing)", "New York City (Music Concerts)"])
     if st.button("Confirm Destination"):
-        if "Hawaii" in dest_choice:
+        if "Hawaii" in dest:
             st.session_state.destination = "Hawaii"
-        elif "Vail" in dest_choice:
+        elif "Vail" in dest:
             st.session_state.destination = "Vail"
         else:
             st.session_state.destination = "New York"
-        st.session_state.step = 3
+        st.session_state.step = 21  # → new step for checkin/checkout
 
-# Step 4: Show preferences based on previous stay (listed)
+# Step 21: Checkin & Checkout
+elif st.session_state.step == 21:
+    st.write("📅 Please select your stay dates:")
+    checkin = st.date_input("Check-in Date")
+    checkout = st.date_input("Check-out Date")
+    if st.button("Confirm Dates"):
+        if checkin and checkout and checkin < checkout:
+            st.session_state.checkin = str(checkin)
+            st.session_state.checkout = str(checkout)
+            st.session_state.step = 3
+        else:
+            st.error("⚠️ Please select valid check-in and check-out dates.")
+
+# Step 3: Preferences
 elif st.session_state.step == 3:
-    d = st.session_state.destination
-    st.write("Based on your previous stay preferences, we are considering:")
-    if d == "Hawaii":
-        st.markdown(f"- **Preference:** {preferences['Hawaii']}")
-    elif d == "Vail":
-        st.markdown(f"- **Preference:** {preferences['Vail']}")
-    elif d == "New York":
-        st.markdown(f"- **Preference:** {preferences['New York']}")
+    dest = st.session_state.destination
+    st.write(f"Based on your previous stay preferences for **{dest}**, we are considering:")
+    st.info(preferences[dest])
     if st.button("Go for Hotel Options"):
         st.session_state.step = 4
 
-# Step 5: Show hotel options for chosen destination
+# Step 4: Hotels
 elif st.session_state.step == 4:
-    d = st.session_state.destination
-    st.write(f"Stay options for **{d}**")
-    hotels = hotel_options[d]
-    for idx, h in enumerate(hotels, start=1):
-        st.markdown(f"**Option-{idx}**  \n**{h['name']}**  \n{h['rating']}  \n{h['desc']}  \n**Directions** {h['phone']}  \n**Price- ${h['price']} per night (inclusive of all taxes)**")
-        st.divider()
-    chosen = st.radio("Select hotel option:", [f"Option-{i}" for i in range(1, len(hotels)+1)])
-    if st.button("Confirm Hotel Selection"):
-        sel_idx = int(chosen.split("-")[1]) - 1
-        st.session_state.selected_hotel_index = sel_idx
-        st.session_state.selected_hotel = hotels[sel_idx]
-        st.session_state.total_price = st.session_state.selected_hotel["price"]
-        st.session_state.step = 5
+    dest = st.session_state.destination
+    st.write(f"Here are some hotel options in **{dest}**:")
+    for idx, hotel in enumerate(hotel_options[dest], 1):
+        if st.button(f"🏨 Option {idx}: {hotel['name']}"):
+            st.session_state.selected_hotel = hotel
+            st.session_state.step = 5
+    if st.session_state.selected_hotel:
+        h = st.session_state.selected_hotel
+        st.markdown(f"""
+        ### {h['name']}
+        ⭐ {h['rating']}  
+        📝 {h['desc']}  
+        📞 {h['phone']}  
+        💲 {h['price']} per night
+        """)
 
-# Step 8: Ask guest if interested in booking other activities and give two options
+# Step 5: Activities option
 elif st.session_state.step == 5:
-    st.write("Would you like to book other activities?")
-    act_choice = st.radio("Choose:", ("Show suggestions", "Skip suggestion"))
-    if st.button("Confirm"):
-        st.session_state.activity_choice = act_choice
-        if act_choice == "Show suggestions":
+    hotel = st.session_state.selected_hotel
+    st.success(f"You selected **{hotel['name']}** (${hotel['price']} per night).")
+    choice = st.radio("Would you like to see suggestions for activities?", ["Show suggestions", "Skip suggestion"])
+    if st.button("Confirm Activity Choice"):
+        st.session_state.activity_choice = choice
+        if choice == "Show suggestions":
             st.session_state.step = 6
         else:
-            st.session_state.activities_confirmed = False
-            st.session_state.step = 9
+            st.session_state.step = 8
 
-# Step 9 (if Show suggestions chosen): display activities and allow proceed
+# Step 6: Show activities
 elif st.session_state.step == 6:
-    d = st.session_state.destination
-    st.write("Here are suggestions:")
-    for a in activities[d]:
-        st.markdown(f"- {a}")
-    if st.button("Proceed with suggestions"):
-        st.session_state.activity_price = 2500
-        st.session_state.activities_confirmed = True
+    dest = st.session_state.destination
+    acts = get_activity_dates(st.session_state.checkin, activities[dest])
+    st.write("Here are some suggested activities for your trip:")
+    for act in acts:
+        st.markdown(f"- {act}")
+    if st.button("Proceed with Activities"):
+        st.session_state.step = 8
+
+# Step 8: Price summary
+elif st.session_state.step == 8:
+    hotel = st.session_state.selected_hotel
+    checkin = datetime.strptime(st.session_state.checkin, "%Y-%m-%d")
+    checkout = datetime.strptime(st.session_state.checkout, "%Y-%m-%d")
+    nights = (checkout - checkin).days
+    base = hotel["price"] * nights
+    if st.session_state.activity_choice == "Show suggestions":
+        total = base + 2500
+        st.session_state.final_price = total
+        st.write(f"🏨 Hotel ({nights} nights): ${base}")
+        st.write("🎉 Activities Package: $2500")
+        st.success(f"💰 Total Price: ${total}")
+    else:
+        total = base
+        st.session_state.final_price = total
+        st.success(f"💰 Total Price for {nights} nights: ${total}")
+    proceed = st.radio("Proceed to payment?", ["Yes", "No"])
+    if proceed == "Yes":
         st.session_state.step = 9
-    if st.button("Cancel suggestions and skip"):
-        st.session_state.activity_price = 0
-        st.session_state.activities_confirmed = False
-        st.session_state.step = 9
+
+# Step 9: Payment
+elif st.session_state.step == 9:
+    st.info("💳 A payment link has been sent via SMS to your mobile number. Please pay within 10 minutes to confirm booking.")
+    if st.button("Yay!!!"):
+        st.session_state.step = 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Step 11: Price summary - SAFELY access selected_hotel
 elif st.session_state.step == 9:
