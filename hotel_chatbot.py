@@ -166,4 +166,4 @@ elif st.session_state.step == 11:
 elif st.session_state.step == 12:
     st.success(f"Thanks for the confirmation. We will {st.session_state.service}.")
     st.write(f"Hi {st.session_state.guest_name}, thanks for choosing {st.session_state.hotel.split('-')[0]}. We hope you had a wonderful stay!")
-    st.write(properties within 365 days. 🎁")
+    st.write(properties within 365 days.)
