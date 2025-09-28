@@ -270,9 +270,10 @@ elif st.session_state.step == 8:
         total = base
         st.session_state.final_price = total
         st.success(f"💰 Total Price for {nights} nights: ${total}")
-    proceed = st.radio("Proceed to payment?", ["Yes", "No"])
-    if proceed == "Yes":
-        st.session_state.step = 9
+   st.write(f"💰 Total Price: ${st.session_state.final_price}")
+
+if st.button("Proceed to Payment"):
+    st.session_state.step = 9
 
 # Step 9: Payment
 elif st.session_state.step == 9:
