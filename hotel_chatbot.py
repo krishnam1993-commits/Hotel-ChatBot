@@ -463,13 +463,90 @@ if st.session_state.proceed_personalization:
 
 
 
-# Step 19: In-stay options (guest has checked-in)
-elif st.session_state.step == 19:
-    st.write(f"Hi {st.session_state.name}, We hope you are having a wonderful experience during your stay. As you have checked-in today, please select from below options")
-    service_choice = st.selectbox("Select a service", ("Wake Up Call at 7AM", "Laundry", "Call cab", "Schedule breakfast in room"))
-    if st.button("Confirm Service Request"):
-        st.session_state.instay_service = service_choice
-        st.session_state.step = 20
+# -----------------------------
+# Step 19: In-stay Services Selection
+# -----------------------------
+
+st.write(f"Hi {st.session_state.name}, we hope you are having a wonderful experience during your stay.")
+st.write("Please select from the options below:")
+
+# Options for guest services
+service_options = [
+    "Wake Up Call at 7AM",
+    "Laundry",
+    "Call cab",
+    "Schedule breakfast in room"
+]
+
+# Multi-selection dropdown
+selected_services = st.multiselect(
+    "Select the services you want:",
+    service_options
+)
+
+# Confirm selections
+if st.button("Confirm Services"):
+    # Save each selection in session_state
+    st.session_state.wake_up_call = "Wake Up Call at 7AM" in selected_services
+    st.session_state.laundry_request = "Laundry" in selected_services
+    st.session_state.cab_request = "Call cab" in selected_services
+    st.session_state.breakfast_request = "Schedule breakfast in room" in selected_services
+
+    # Show confirmation messages
+    for service in selected_services:
+        st.success(f"Thanks for the confirmation. We will {service} ✅")
+
+    # Move to next step (Step 20)
+    st.session_state.step = 20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Step 20: Service confirmation
 elif st.session_state.step == 20:
