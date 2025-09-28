@@ -566,13 +566,11 @@ if st.session_state.proceed_services:
 
 # -----------------------------
 # Step 20: Service Confirmation Display
-# -----------------------------
 
-# Initialize session_state for step 20
-if "proceed_step20" not in st.session_state:
-    st.session_state.proceed_step20 = False
+# Ensure selected_hotel exists
+hotel_name = st.session_state.selected_hotel.get("name", "your hotel") if st.session_state.selected_hotel else "your hotel"
 
-st.write(f"Hi {st.session_state.name}, thanks for choosing {st.session_state.selected_hotel['name']} for your stay.")
+st.write(f"Hi {st.session_state.name}, thanks for choosing {hotel_name} for your stay.")
 
 # Display selected services summary
 st.write("Here’s a summary of the services you selected:")
@@ -587,12 +585,7 @@ if st.session_state.breakfast_request:
 
 # Proceed button
 if st.button("Proceed Further"):
-    st.session_state.proceed_step20 = True
-
-# Move to Step 21
-if st.session_state.proceed_step20:
     st.session_state.step = 21
-    st.session_state.proceed_step20 = False  # reset flag
 
 # -----------------------------
 # Step 21: Post-Stay Thank You & Feedback Prompt
@@ -614,6 +607,13 @@ if st.session_state.step == 21:
 if st.session_state.proceed_step21:
     st.session_state.step = 22
     st.session_state.proceed_step21 = False  # reset flag
+
+
+
+
+
+
+
 
 # -----------------------------
 # Step 22: Loyalty Offer
