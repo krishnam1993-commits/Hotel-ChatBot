@@ -528,9 +528,12 @@ if st.session_state.step == 19:
 
 # =====================
 # Step 20: Service Confirmation Display
-# =====================
+Step 20: Service Confirmation Display
+# -----------------------------
+
 if st.session_state.step == 20:
 
+    # Safely get hotel name
     hotel_name = st.session_state.selected_hotel.get("name", "your hotel") \
         if st.session_state.selected_hotel else "your hotel"
 
@@ -546,9 +549,17 @@ if st.session_state.step == 20:
     if st.session_state.breakfast_request:
         st.write("✅ Schedule breakfast in room")
 
+    # Only move to next step when this button is clicked
     if st.button("Proceed Further"):
         st.session_state.step = 21
-        st.experimental_rerun()
+        st.experimental_rerun()  # show Step 21 immediately
+
+
+
+
+
+
+
 
 # =====================
 # Step 21: Post-Stay Thank You & Feedback Prompt
