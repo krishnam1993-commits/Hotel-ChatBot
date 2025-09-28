@@ -178,7 +178,7 @@ st.title("🏨 Hotel Booking Assistant")
 # Always-on Restart
 if st.button("🔄 Restart Chat"):
     reset_chat()
-    st.experimental_rerun()
+    st.rerun()
 
 # Make sure we have all keys
 ensure_keys()
@@ -190,7 +190,7 @@ if st.session_state.step == 0:
     st.write("👋 Hello! Welcome to our Hotel Booking Assistant.")
     if st.button("Start Chat"):
         st.session_state.step = 1
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 1: Guest Name
@@ -201,7 +201,7 @@ elif st.session_state.step == 1:
         if name_val.strip():
             st.session_state.name = name_val.strip()
             st.session_state.step = 2
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.warning("Please enter a valid name to proceed.")
 
@@ -221,7 +221,7 @@ elif st.session_state.step == 2:
         else:
             st.session_state.destination = "New York"
         st.session_state.step = 21
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 21: Check-in / Check-out Dates
@@ -235,7 +235,7 @@ elif st.session_state.step == 21:
             st.session_state.checkin = checkin_dt
             st.session_state.checkout = checkout_dt
             st.session_state.step = 3
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("⚠️ Please pick a valid date range (check-in must be before check-out).")
 
@@ -248,7 +248,7 @@ elif st.session_state.step == 3:
     st.info(preferences[d])
     if st.button("Go for Hotel Options"):
         st.session_state.step = 4
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 4: Hotel Options (with icons)
@@ -276,7 +276,7 @@ elif st.session_state.step == 4:
     if st.button("Proceed with this Hotel"):
         st.session_state.selected_hotel = h
         st.session_state.step = 5
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 5: Activities Option
@@ -291,7 +291,7 @@ elif st.session_state.step == 5:
             st.session_state.step = 6
         else:
             st.session_state.step = 8
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 6: Show Activities (dates derived from check-in)
@@ -304,11 +304,11 @@ elif st.session_state.step == 6:
         st.markdown(f"- {a}")
     if st.button("Proceed with these activities"):
         st.session_state.step = 8
-        st.experimental_rerun()
+        st.rerun()
     if st.button("Cancel suggestions and skip"):
         st.session_state.activity_choice = "Skip suggestion"
         st.session_state.step = 8
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 8: Price Summary
@@ -338,7 +338,7 @@ elif st.session_state.step == 8:
 
     if st.button("Proceed to Payment"):
         st.session_state.step = 9
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 9: Payment
@@ -348,7 +348,7 @@ elif st.session_state.step == 9:
     st.write("Thanks for booking with us. We are excited to host you for a wonderful stay experience.")
     if st.button("Yay!!!"):
         st.session_state.step = 10
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 10: Pre-arrival Documents & Personalization Prompt
@@ -362,7 +362,7 @@ elif st.session_state.step == 10:
     st.write("We would ask you to spend a minute with us to personalize your experience during the stay.")
     if st.button("Okay"):
         st.session_state.step = 18
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 18: Personalization (Allergy, Gym)
@@ -379,7 +379,7 @@ elif st.session_state.step == 18:
     if st.button("Proceed"):
         st.success("Thanks for your confirmation!")
         st.session_state.step = 19
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 19: In-stay Services (Multi-select)
@@ -401,7 +401,7 @@ elif st.session_state.step == 19:
             st.success(f"Thanks for the confirmation. We will {s} ✅")
 
         st.session_state.step = 20
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 20: Service Confirmation
@@ -417,7 +417,7 @@ elif st.session_state.step == 20:
 
     if st.button("Proceed Further"):
         st.session_state.step = 21
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 21 (post-stay): Thank You & Feedback Prompt
@@ -428,7 +428,7 @@ elif st.session_state.step == 21:
     st.write("We would love to hear back from you on your experience.")
     if st.button("Provide Feedback / Proceed"):
         st.session_state.step = 22
-        st.experimental_rerun()
+        st.rerun()
 
 # ==============================
 # Step 22: Loyalty Offer
@@ -441,4 +441,4 @@ elif st.session_state.step == 22:
         # Offer a restart at the end as well
         if st.button("Restart Chat"):
             reset_chat()
-            st.experimental_rerun()
+            st.rerun()
