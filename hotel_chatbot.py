@@ -192,13 +192,17 @@ elif st.session_state.step == 3:
         st.session_state.step = 4
 
 # Step 4: Hotels
+# Step 4: Hotels
 elif st.session_state.step == 4:
     dest = st.session_state.destination
     st.write(f"Here are some hotel options in **{dest}**:")
+
+    # Hotel selection buttons
     for idx, hotel in enumerate(hotel_options[dest], 1):
         if st.button(f"🏨 Option {idx}: {hotel['name']}"):
             st.session_state.selected_hotel = hotel
-            st.session_state.step = 5
+
+    # Show details of selected hotel
     if st.session_state.selected_hotel:
         h = st.session_state.selected_hotel
         st.markdown(f"""
@@ -208,6 +212,24 @@ elif st.session_state.step == 4:
         📞 {h['phone']}  
         💲 {h['price']} per night
         """)
+
+        # Now show Proceed button
+        if st.button("Proceed with this Hotel"):
+            st.session_state.step = 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Step 5: Activities option
 elif st.session_state.step == 5:
