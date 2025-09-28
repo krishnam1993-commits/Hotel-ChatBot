@@ -407,17 +407,39 @@ elif st.session_state.step == 15:
         st.session_state.step = 18
 
 # Step 18: Personalization inputs (allergy, gym time)
-elif st.session_state.step == 18:
-    allergy_input = st.text_input("i) Please describe food allergy, if any. Type 'NA' in case of no allergy.", value=st.session_state.allergy)
-    if st.button("Submit Allergy"):
-        st.session_state.allergy = allergy_input.strip() if allergy_input else "NA"
-        st.success("Thanks for your confirmation")
-    gym_input = st.text_input("ii) Please confirm if you want to use gym during your stay in 24 hr time format (or type 'NA')", value=st.session_state.gym_time)
-    if st.button("Submit Gym Time"):
-        st.session_state.gym_time = gym_input.strip() if gym_input else "NA"
-        st.success("Thanks for your confirmation")
-    if st.button("Proceed Further"):
-        st.session_state.step = 19
+# -----------------------------
+# Step 18: Personalization Inputs (Food Allergy & Gym Usage)
+# -----------------------------
+
+# Initialize session_state variables for this step
+if "allergy" not in st.session_state:
+    st.session_state.allergy = ""
+
+if "gym_use" not in st.session_state:
+    st.session_state.gym_use = ""
+
+st.write("We would ask you to spend a minute with us to personalize your experience during the stay.")
+
+# Allergy input
+allergy_input = st.text_input(
+    "i) Please describe food allergy, if any. Type 'NA' in case of no allergy.",
+    value=st.session_state.allergy
+)
+
+# Gym input
+gym_input = st.text_input(
+    "ii) Please confirm if you want to use gym during your stay in 24 hr time format.",
+    value=st.session_state.gym_use
+)
+
+# Save inputs when Proceed is clicked
+if st.button("Proceed"):
+    st.session_state.allergy = allergy_input.strip()
+    st.session_state.gym_use = gym_input.strip()
+    st.success("Thanks for your confirmation!")
+    # Move to next step (e.g., Step 19)
+    st.session_state.step = 19
+
 
 # Step 19: In-stay options (guest has checked-in)
 elif st.session_state.step == 19:
